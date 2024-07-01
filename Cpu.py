@@ -1,7 +1,11 @@
+from functools import cache
+from itertools import product
+from multiprocessing import Pool
+from time import perf_counter
 from Dice import Dice
 from Game import Game
 from Player import Player
-from typing import Union
+from typing import Iterable, Union, Tuple
 from Tile import Tile
 
 
@@ -14,7 +18,7 @@ class CPU(Player):
         score_dict: dict = self.calculate_conversion_dice_score_to_worms(game)
         possible_choices: list[dice_face_value] = self.find_possible_choices(dice)
 
-        return(possible_choices[0],False)
+        return(2,False)
     
     
     def find_possible_choices(self, dice: Dice) -> list[dice_face_value]:
@@ -97,7 +101,53 @@ class CPU(Player):
             (choice, roll_again) = self.select_dice(game, dice)
             dice.select_face_of_dice(choice)
         return dice.get_score()
-    
+
+
+    @staticmethod
+    @cache
+    def p(target: int, used = None, dices: int = 8) -> Tuple[int, float]  :
+        # idea: return 0 if it is not possible to reach the target (i.e have used target of 35, and have used 2 die)
+        if used is None:
+            used = {}
+        if target == 0:
+            return target, 1
+        if target < 0 or dices == 0 or len(used) == 6:
+            return target, 0
+        # print(target, used, dices)
+        s: float = 0
+        c :int = 0
+        for throw in product(*(dices * [[1, 2, 3, 4, 5, 6]])):
+            m :float = 0
+            c += 1
+            for i in range(1, 7):
+                if i in used:
+                    continue
+                selected = throw.count(i)
+                if selected == 0:
+                    continue
+                score: int = 5 if i == 6 else i
+                new_target: int = target - selected * score
+                pc : float
+                _, pc = CPU.p(new_target, frozenset({*used, i}), dices - selected)
+                # print(i, selected, pc, new_target, throw)
+                m = max(m, pc)
+            s += m
+        return (target, s / c)
+
 
 if __name__ == "__main__":
-    pass
+
+    time_start = perf_counter()
+
+    with Pool() as pool:
+        results = pool.map(CPU.p, (i for i in range(1, 41)))
+    
+        for target, probability in results:
+            print(f"{target}   {probability}")
+
+    
+    time_end = perf_counter()
+    # calculate the duration
+    time_duration = time_end - time_start
+    # report the duration
+    print(f'Took {time_duration:.3f} seconds')
