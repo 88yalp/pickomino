@@ -22,11 +22,11 @@ def startup() -> Game:
         game.add_player(HumanPlayer(input("Next player ")))
         number_of_players += 1
         answer = input("add more players? (y/n)")
-    # answer = input("add CPU? (y/n)")
-    # while answer != "n":
-    #     game.add_player(CPU(input("Next CPU ")))
-    #     number_of_players += 1
-    #     answer = input("add more CPUs? (y/n)")
+    answer = input("add CPU? (y/n)")
+    while answer != "n":
+        game.add_player(CPU(input("Next CPU ")))
+        number_of_players += 1
+        answer = input("add more CPUs? (y/n)")
     if number_of_players < 2:
         print("Need at least 2 player")
         exit()

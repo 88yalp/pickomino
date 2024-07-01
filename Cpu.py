@@ -17,15 +17,28 @@ class CPU(Player):
         score_dict: dict = self.calculate_conversion_dice_score_to_worms(game)
         possible_choices: list[int] = self.find_possible_choices(dice)
 
+        max_expected_delta_worms: float = -10 #will be updated, needed to be lower then the minimum expected value
+        choice: int = 0
         for possible_choice in set(possible_choices):
+            count: int = dice.unselected_dice.count(possible_choice)
+            score_gained: int = 5 * count if possible_choice == 6 else possible_choice * count
 
-
-            for i in range(1,41 - dice.get_score() - possible_choice * dice.unselected_dice.count(possible_choice)):
+            for i in range(1,41 - dice.get_score() - score_gained):
                 probability: float
-                _, probability = self.p(i,used = frozenset({*dice.selected_dice, possible_choice}), dices = len(dice.unselected_dice))
+                _, probability = self.p(i,used = frozenset({*dice.selected_dice, possible_choice}), dices = len(dice.unselected_dice) - count)
+                expected_delta_worms: float = score_dict.get(i, 0) * probability
+                if max_expected_delta_worms <= expected_delta_worms:
+                    max_expected_delta_worms = expected_delta_worms
+                    choice = possible_choice
+                    
+        print(max_expected_delta_worms)
+        count = dice.unselected_dice.count(choice)
+        score_gained: int = 5 * count if choice == 6 else choice * count
+        new_score: int = dice.get_score() + score_gained
 
+        re_roll: bool = score_dict.get(new_score, 0) < max_expected_delta_worms
 
-        return(2,False)
+        return (choice, re_roll)
     
     
     def find_possible_choices(self, dice: Dice) -> list[int]:

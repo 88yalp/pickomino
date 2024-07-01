@@ -20,9 +20,11 @@ class Dice:
         Author:
             Magnus Rein
         """
-        output: str = f"Sum now: {self.get_score()}. Chosen dice: {self.selected_dice}. Rolled dice: {self.unselected_dice}"
-        output = output.replace(" 6", f' {self.worm}')
-        return output
+        sum: str = f"Sum now: {self.get_score()}."
+        dices: str = f"Chosen dice: {self.selected_dice}. Rolled dice: {self.unselected_dice}"
+        dices = dices.replace("6", f' {self.worm}')
+
+        return sum + dices
 
     def roll_dice(self) -> None:
         """ Rolls the unselected dices
