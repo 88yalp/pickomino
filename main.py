@@ -4,7 +4,6 @@ from Player import Player
 from HumanPlayer import HumanPlayer
 from typing import Union
 
-dice_face_value = Union[int, str]
 
 
 def startup() -> Game:

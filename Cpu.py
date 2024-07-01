@@ -9,20 +9,27 @@ from typing import Iterable, Union, Tuple
 from Tile import Tile
 
 
-dice_face_value = Union[int, str]
 
 
 class CPU(Player):
     
-    def select_dice(self, game: Game, dice: Dice) -> tuple[dice_face_value, bool]:
+    def select_dice(self, game: Game, dice: Dice) -> tuple[int, bool]:
         score_dict: dict = self.calculate_conversion_dice_score_to_worms(game)
-        possible_choices: list[dice_face_value] = self.find_possible_choices(dice)
+        possible_choices: list[int] = self.find_possible_choices(dice)
+
+        for possible_choice in set(possible_choices):
+
+
+            for i in range(1,41 - dice.get_score() - possible_choice * dice.unselected_dice.count(possible_choice)):
+                probability: float
+                _, probability = self.p(i,used = frozenset({*dice.selected_dice, possible_choice}), dices = len(dice.unselected_dice))
+
 
         return(2,False)
     
     
-    def find_possible_choices(self, dice: Dice) -> list[dice_face_value]:
-        possible_choices: list[dice_face_value] = []
+    def find_possible_choices(self, dice: Dice) -> list[int]:
+        possible_choices: list[int] = []
 
         for die in dice.unselected_dice:
             if self.is_possible_choices(possible_choices, dice, die):
@@ -31,7 +38,7 @@ class CPU(Player):
         return possible_choices
     
     
-    def is_possible_choices(self, possible_choices: list[dice_face_value], dice: Dice, die: dice_face_value) -> bool:
+    def is_possible_choices(self, possible_choices: list[int], dice: Dice, die: int) -> bool:
         if die in dice.selected_dice:
             return False
         if die in possible_choices:
@@ -97,7 +104,7 @@ class CPU(Player):
             print(dice)
             if not dice.have_valid_choice():
                 return 0
-            choice: dice_face_value
+            choice: int
             (choice, roll_again) = self.select_dice(game, dice)
             dice.select_face_of_dice(choice)
         return dice.get_score()
@@ -106,7 +113,7 @@ class CPU(Player):
     @staticmethod
     @cache
     def p(target: int, used = None, dices: int = 8) -> Tuple[int, float]  :
-        # idea: return 0 if it is not possible to reach the target (i.e have used target of 35, and have used 2 die)
+        # idea: return 0 if it is not possible to reach the target (i.e have target of 35, and have used 2 die)
         if used is None:
             used = {}
         if target == 0:

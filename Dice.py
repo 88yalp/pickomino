@@ -1,13 +1,12 @@
 import random
 from typing import Union
 
-dice_face_value = Union[int, str]
 
 class Dice:
 
     def __init__(self) -> None:
-        self.selected_dice: list[dice_face_value] = []
-        self.unselected_dice: list[dice_face_value] = [0 for _ in range(8)]
+        self.selected_dice: list[int] = []
+        self.unselected_dice: list[int] = [0 for _ in range(8)]
         self.worm: str = "\U0001FAB1"
     
     def __str__(self) -> str:
@@ -21,7 +20,9 @@ class Dice:
         Author:
             Magnus Rein
         """
-        return f"Sum now: {self.get_score()}. Chosen dice: {self.selected_dice}. Rolled dice: {self.unselected_dice}"
+        output: str = f"Sum now: {self.get_score()}. Chosen dice: {self.selected_dice}. Rolled dice: {self.unselected_dice}"
+        output = output.replace(" 6", f' {self.worm}')
+        return output
 
     def roll_dice(self) -> None:
         """ Rolls the unselected dices
@@ -30,16 +31,12 @@ class Dice:
             Magnus Rein
         """
         for index, _ in enumerate(self.unselected_dice):
-            die: Union[int, str] = random.randint(1,6)
+            die: int = random.randint(1,6)
             self.unselected_dice[index] = die
         self.unselected_dice.sort()
 
-        for index, die in enumerate(self.unselected_dice):
-            if die == 6:
-                die = self.worm
-            self.unselected_dice[index] = die
 
-    def select_face_of_dice(self, choice: dice_face_value) -> bool:
+    def select_face_of_dice(self, input: int) -> bool:
         """ Selects one of faces of the dices 
 
         Selects one of the faces of the rolled dice, and adds those dice to the selected dices. 
@@ -54,13 +51,20 @@ class Dice:
             Magnus Rein
         """
         # Tested: True
-        if choice == "w":
-            choice = self.worm
+        flagg:bool = False
+        choice: int
+        if input == "w":
+            flagg = True
+            choice = 6
         else:
-            choice = int(choice)
+            choice = int(input)
         if not self.is_valid_choice(choice):
-            print(f"{choice} is not a valid choice, pleas select a valid choice")
-            return False
+            if flagg:
+                print(f"{self.worm} is not a valid choice, pleas select a valid choice")
+                return False
+            else:
+                print(f"{choice} is not a valid choice, pleas select a valid choice")
+                return False
 
         for index in range(len(self.unselected_dice) - 1, -1, -1):
             if self.unselected_dice[index] == choice:
@@ -68,7 +72,7 @@ class Dice:
         
         return True
 
-    def is_valid_choice(self, choice: dice_face_value) -> bool:
+    def is_valid_choice(self, choice: int) -> bool:
         """ Checks if the given choice is a valid choice
 
         Args:
@@ -99,7 +103,7 @@ class Dice:
             score += self.get_value(die)
         return score
     
-    def get_value(self, symbol: dice_face_value) -> int:
+    def get_value(self, symbol: int) -> int:
         """ gets the value of a symbol 
 
         Args:
@@ -111,10 +115,7 @@ class Dice:
         Author:
             Magnus Rein
         """
-        if isinstance(symbol, str):
-            return 5
-        else:
-            return symbol
+        return 5 if symbol == 6 else symbol
 
     def have_valid_choice(self) -> bool:
         """ Checks if there is a valid choice of dice
@@ -130,7 +131,7 @@ class Dice:
                 return True
         return False
 
-    def no_rng_roll(self, rolled: list[dice_face_value]) -> None:
+    def no_rng_roll(self, rolled: list[int]) -> None:
         """ For Writing tests, rolls dice without rng
 
         Args:
@@ -153,7 +154,7 @@ if __name__ == "__main__":
     dice.roll_dice()
     while dice.have_valid_choice():
         print(dice)
-        while not dice.select_face_of_dice(input("select a set of dice to keep (w for worm): ")):
+        while not dice.select_face_of_dice(int(input("select a set of dice to keep (w for worm): "))):
             pass
         dice.roll_dice()
     
