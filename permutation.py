@@ -1,11 +1,13 @@
 from itertools import product
 from functools import cache
-
+from time import perf_counter
+from typing import Tuple
 """
 Genarate all permutations of a list of numbers
 """
 
 
+@cache
 def perm(n):
     """
     Generate all permutations of numbers from 1 to n.
@@ -20,25 +22,15 @@ def perm(n):
     return r
 
 
-# print(perm(0))
-# print(perm(1))
-# print(perm(2))
-# print(perm(3))
-# print(perm(4))
-
-
+@cache
 def perm2(n):
-    combined = []
     for _ in range(n):
         combined.append([1, 2, 3, 4, 5, 6])
     return product(*combined)
 
 
-# perm(9)
-# perm2(9)
-# print(*perm2(4), sep="\n")
-
-WORM_SCORE = 5
+def perm3(n):
+    return product(*(n * [[1, 2, 3, 4, 5, 6]]))
 
 
 @cache
@@ -69,10 +61,10 @@ def p(target, used, dices):
     return s / c
 
 
-for j in range(1, 10):
-    print(j, p(j, frozenset(), 8))
-for j in range(1, 10):
-    print(j, p(j, frozenset(), 8))
+# for j in range(1, 10):
+#     print(j, p(j, frozenset(), 8))
+# for j in range(1, 10):
+#     print(j, p(j, frozenset(), 8))
 
 # assert p(0, set(), 0) == 1
 # assert p(0, set(), 1) == 1

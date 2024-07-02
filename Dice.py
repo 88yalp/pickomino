@@ -8,7 +8,7 @@ class Dice:
         self.selected_dice: list[int] = []
         self.unselected_dice: list[int] = [0 for _ in range(8)]
         self.worm: str = "\U0001FAB1"
-    
+
     def __str__(self) -> str:
         """ Makes a string representation of the Dice
 
@@ -16,7 +16,7 @@ class Dice:
 
         Returns:
             str: The sting representation of the Dice. 
-        
+
         Author:
             Magnus Rein
         """
@@ -33,10 +33,9 @@ class Dice:
             Magnus Rein
         """
         for index, _ in enumerate(self.unselected_dice):
-            die: int = random.randint(1,6)
+            die: int = random.randint(1, 6)
             self.unselected_dice[index] = die
         self.unselected_dice.sort()
-
 
     def select_face_of_dice(self, input: int) -> bool:
         """ Selects one of faces of the dices 
@@ -53,7 +52,7 @@ class Dice:
             Magnus Rein
         """
         # Tested: True
-        flagg:bool = False
+        flagg: bool = False
         choice: int
         if input == "w":
             flagg = True
@@ -62,7 +61,8 @@ class Dice:
             choice = int(input)
         if not self.is_valid_choice(choice):
             if flagg:
-                print(f"{self.worm} is not a valid choice, pleas select a valid choice")
+                print(
+                    f"{self.worm} is not a valid choice, pleas select a valid choice")
                 return False
             else:
                 print(f"{choice} is not a valid choice, pleas select a valid choice")
@@ -70,8 +70,8 @@ class Dice:
 
         for index in range(len(self.unselected_dice) - 1, -1, -1):
             if self.unselected_dice[index] == choice:
-                self.selected_dice.append(self.unselected_dice.pop(index)) 
-        
+                self.selected_dice.append(self.unselected_dice.pop(index))
+
         return True
 
     def is_valid_choice(self, choice: int) -> bool:
@@ -89,14 +89,13 @@ class Dice:
         if choice in self.unselected_dice and choice not in self.selected_dice:
             return True
         return False
-        
 
     def get_score(self) -> int:
         """ Gets the sum of the selected dice
 
         Returns:
             int: the sum of the selected dice
-        
+
         Author:
             Magnus Rein
         """
@@ -104,7 +103,7 @@ class Dice:
         for die in self.selected_dice:
             score += self.get_value(die)
         return score
-    
+
     def get_value(self, symbol: int) -> int:
         """ gets the value of a symbol 
 
@@ -113,7 +112,7 @@ class Dice:
 
         Returns:
             int: the value of the symbol
-        
+
         Author:
             Magnus Rein
         """
@@ -124,7 +123,7 @@ class Dice:
 
         Returns:
             bool: True if there is a valid choice, else False
-        
+
         Author:
             Magnus Rein
         """
@@ -141,15 +140,17 @@ class Dice:
 
         Raises:
             Exception: raised if the number of new values is different the the number of old values
-        
+
         Author:
             Magnus Rein
         """
         # Tested: True
         if len(rolled) != len(self.unselected_dice):
-            raise Exception("the number of predetermined dice is wrong, need to match number of unselected dice")
+            raise Exception(
+                "the number of predetermined dice is wrong, need to match number of unselected dice")
         for index, value in enumerate(rolled):
             self.unselected_dice[index] = value
+
 
 if __name__ == "__main__":
     dice: Dice = Dice()
@@ -159,4 +160,3 @@ if __name__ == "__main__":
         while not dice.select_face_of_dice(int(input("select a set of dice to keep (w for worm): "))):
             pass
         dice.roll_dice()
-    

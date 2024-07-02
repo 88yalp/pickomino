@@ -11,10 +11,10 @@ class Game:
             Magnus Rein
         """
         self.players: list[Player] = []
-        self.board_tiles: list[Tile] = [] 
+        self.board_tiles: list[Tile] = []
         self.current_player_index: int = 0
-    
-    def setup(self)-> None:
+
+    def setup(self) -> None:
         """Does the basic setup
 
         Generates all the tiles, and adds them to the board tiles.
@@ -23,7 +23,7 @@ class Game:
             Magnus Rein
         """
         # Tested: True
-        for dice_score in range(21,37):
+        for dice_score in range(21, 37):
             self.board_tiles.append(Tile(dice_score))
 
     def __str__(self) -> str:
@@ -31,7 +31,7 @@ class Game:
 
         Returns:
                 str: the string representing the current state of the game
-        
+
         Author:
             Magnus Rein
         """
@@ -43,13 +43,13 @@ class Game:
         for player in self.players:
             output += f"{player.__str__()}"
         return output
-    
+
     def add_player(self, new_player: Player) -> None:
         """ Adds a player to the game
 
         Args:
                 new_player (Player): The player that is added to the game
-        
+
         Author:
             Magnus Rein
         """
@@ -67,7 +67,8 @@ class Game:
         """
         # Tested: True
         next_player: Player = self.players[self.current_player_index]
-        self.current_player_index = (self.current_player_index + 1)% len(self.players)
+        self.current_player_index = (
+            self.current_player_index + 1) % len(self.players)
         return next_player
 
     def is_active(self) -> bool:
@@ -75,7 +76,7 @@ class Game:
 
         Returns:
                 bool: Active game -> True, Not active game -> False
-            
+
         Author:
             Magnus Rein
         """
@@ -84,7 +85,7 @@ class Game:
             if not tile.is_turned:
                 return True
         return False
-    
+
     def highest_tile(self) -> Tile:
         """The highest tile on the board
 
@@ -93,7 +94,7 @@ class Game:
 
         Returns:
                 Tile: the tile on the board that has the highest value.
-        
+
         Author:
                 Magnus Rein
         """
@@ -101,13 +102,13 @@ class Game:
             if not tile.is_turned:
                 return tile
         raise Exception("something went wrong")
-    
+
     def lowest_tile(self) -> Tile:
         return self.board_tiles[0]
 
-    def add_tile(self, tile:Tile) -> None:
+    def add_tile(self, tile: Tile) -> None:
         for index in range(len(self.board_tiles)):
-            if  self.board_tiles[index].dice_score > tile.dice_score:
+            if self.board_tiles[index].dice_score > tile.dice_score:
                 self.board_tiles.insert(index, tile)
                 return None
 
@@ -116,12 +117,12 @@ class Game:
             if tile.dice_score == dice_score:
                 self.board_tiles.remove(tile)
                 return tile
-        
+
         raise Exception("tile with given dice_score is not in board_tiles")
 
-
     def print_scoreboard(self) -> None:
-        scores: list[tuple[int, Player]] = [(player.calculate_score(), player) for player in self.players]
+        scores: list[tuple[int, Player]] = [
+            (player.calculate_score(), player) for player in self.players]
 
         scores = sorted(scores, key=lambda x: x[0], reverse=True)
         print("The game is over, the scores was:")
@@ -135,19 +136,19 @@ class Game:
                 choices.append(tile.dice_score)
         return choices
 
-    def valid_choices_from_players(self, dice_sum: int, current_player:Player) -> list[int]:
+    def valid_choices_from_players(self, dice_sum: int, current_player: Player) -> list[int]:
         choices: list[int] = []
         for player in self.players:
             if player != current_player:
-                tile: Tile|None = player.get_top_tile()
+                tile: Tile | None = player.get_top_tile()
                 if isinstance(tile, Tile):
                     if tile.dice_score == dice_sum:
                         choices.append(dice_sum)
         return choices
 
-    def valid_choices(self, dice_sum: int, current_player:Player) -> list[int]:
+    def valid_choices(self, dice_sum: int, current_player: Player) -> list[int]:
         return self.valid_choices_from_board(dice_sum) + self.valid_choices_from_players(dice_sum, current_player)
-    
+
     def can_take_tile(self, dice_sum: int, current_player: Player) -> bool:
         """ Determines if the given player can take a tile in the given game with the current dice
 
@@ -185,5 +186,3 @@ class Game:
         self.add_tile(tile_returned)
         if not (tile_returned == self.highest_tile()):
             self.highest_tile().turn()
-
-

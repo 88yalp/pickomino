@@ -22,7 +22,7 @@ class Tile:
 
         Returns:
             str: the string representation of the tile. 
-        
+
         Author:
             Magnus Rein
         """
@@ -67,7 +67,8 @@ class Tile:
         """
         # Tested: True
         if score <= 20:
-            raise ValueError(f"{score} is not a valid value for the diceScore of a tile. Must be natural number between 21 and 36, including endpoints")
+            raise ValueError(
+                f"{score} is not a valid value for the diceScore of a tile. Must be natural number between 21 and 36, including endpoints")
         elif score <= 24:
             return 1
         elif score <= 28:
@@ -77,9 +78,9 @@ class Tile:
         elif score <= 36:
             return 4
         else:
-            raise ValueError(f"{score} is not a valid value for the diceScore of a tile. Must be natural number between 21 and 36, including endpoints")
+            raise ValueError(
+                f"{score} is not a valid value for the diceScore of a tile. Must be natural number between 21 and 36, including endpoints")
+
 
 if __name__ == "__main__":
     pass
-
-    

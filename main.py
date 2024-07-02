@@ -5,7 +5,6 @@ from HumanPlayer import HumanPlayer
 from typing import Union
 
 
-
 def startup() -> Game:
     """ Starts the game and adds the players.
 
@@ -34,6 +33,16 @@ def startup() -> Game:
     return game
 
 
+def cpu_startup() -> Game:
+    game: Game = Game()
+
+    game.add_player(CPU("Per"))
+    game.add_player(CPU("Pål"))
+
+    game.setup()
+    return game
+
+
 def main() -> None:
     """ Main loop of the game.
 
@@ -48,5 +57,17 @@ def main() -> None:
 
     game.print_scoreboard()
 
+
+def test_cpu() -> None:
+    game: Game = cpu_startup()
+
+    while game.is_active():
+        current_player: Player = game.next_player()
+        current_player.player_turn(game)
+
+    game.print_scoreboard()
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    test_cpu()
